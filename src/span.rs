@@ -1,6 +1,6 @@
 use std::ops::{Index, Range};
 
-use crate::pos::{IWidth, Pos, Width};
+use crate::pos::{IWidth, Pos};
 
 /// Represents a span with an inclusive start ([`Span::low`]) and an exclusive
 /// end ([`Span::high`]).
@@ -158,7 +158,7 @@ impl Span {
 		let abs_amount = amount.abs() as u32;
 
 		let high =
-			if amount_is_neg { high - abs_amount } else { high - abs_amount };
+			if amount_is_neg { high - abs_amount } else { high + abs_amount };
 
 		Self::new(low, Pos::from_u32(high))
 	}
