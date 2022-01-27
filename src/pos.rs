@@ -1,5 +1,3 @@
-use std::ops::{Deref, DerefMut};
-
 pub type Width = u32;
 pub type IWidth = i32;
 
@@ -41,5 +39,70 @@ impl From<u32> for Pos {
 impl From<usize> for Pos {
 	fn from(value: usize) -> Self {
 		Self::from_usize(value)
+	}
+}
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+
+	#[test]
+	fn from_u32() {
+		let value = u32::MIN;
+		let pos = Pos::from_u32(value);
+		assert_eq!(pos.0, value);
+
+		let value = u32::MAX;
+		let pos = Pos::from_u32(value);
+		assert_eq!(pos.0, value);
+
+		let value = 0xdeadbeef;
+		let pos = Pos::from_u32(value);
+		assert_eq!(pos.0, value);
+	}
+
+	#[test]
+	fn from_usize() {
+		let value = u32::MIN;
+		let pos = Pos::from_usize(value as usize);
+		assert_eq!(pos.0, value);
+
+		let value = u32::MAX;
+		let pos = Pos::from_usize(value as usize);
+		assert_eq!(pos.0, value);
+
+		let value = 0xdeadbeef;
+		let pos = Pos::from_usize(value as usize);
+		assert_eq!(pos.0, value);
+	}
+
+	#[test]
+	fn as_u32() {
+		let value = u32::MIN;
+		let pos = Pos::from_u32(value);
+		assert_eq!(pos.as_u32(), value);
+
+		let value = u32::MAX;
+		let pos = Pos::from_u32(value);
+		assert_eq!(pos.as_u32(), value);
+
+		let value = 0xdeadbeef;
+		let pos = Pos::from_u32(value);
+		assert_eq!(pos.as_u32(), value);
+	}
+
+	#[test]
+	fn as_usize() {
+		let value = u32::MIN as usize;
+		let pos = Pos::from_usize(value);
+		assert_eq!(pos.as_usize(), value);
+
+		let value = u32::MAX as usize;
+		let pos = Pos::from_usize(value);
+		assert_eq!(pos.as_usize(), value);
+
+		let value = 0xdeadbeef_usize;
+		let pos = Pos::from_usize(value);
+		assert_eq!(pos.as_usize(), value);
 	}
 }
