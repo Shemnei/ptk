@@ -202,3 +202,123 @@ impl Index<Span> for [u8] {
 		&self[index.to_usize_range()]
 	}
 }
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+
+	#[test]
+	fn new() {
+		let span = Span::new(Pos::from_u32(10), Pos::from_u32(100));
+		assert_eq!(span.low.as_u32(), 10);
+		assert_eq!(span.high.as_u32(), 100);
+	}
+
+	#[test]
+	fn new_swapped() {
+		let span = Span::new(Pos::from_u32(0xdead), Pos::from_u32(0xbeef));
+		assert_eq!(span.low.as_u32(), 0xbeef);
+		assert_eq!(span.high.as_u32(), 0xdead);
+	}
+
+	#[test]
+	fn with_low() {
+		let span = Span::new(Pos::from_u32(20), Pos::from_u32(50));
+		let span = span.with_low(Pos::from_u32(11));
+		assert_eq!(span.low.as_u32(), 11);
+		assert_eq!(span.high.as_u32(), 50);
+
+		let span = Span::new(Pos::from_u32(20), Pos::from_u32(50));
+		let span = span.with_low(Pos::from_u32(60));
+		assert_eq!(span.low.as_u32(), 50);
+		assert_eq!(span.high.as_u32(), 60);
+	}
+
+	#[test]
+	fn with_high() {
+		let span = Span::new(Pos::from_u32(20), Pos::from_u32(50));
+		let span = span.with_high(Pos::from_u32(44));
+		assert_eq!(span.low.as_u32(), 20);
+		assert_eq!(span.high.as_u32(), 44);
+
+		let span = Span::new(Pos::from_u32(20), Pos::from_u32(50));
+		let span = span.with_high(Pos::from_u32(8));
+		assert_eq!(span.low.as_u32(), 8);
+		assert_eq!(span.high.as_u32(), 20);
+	}
+
+	#[test]
+	fn shift_by_pos() {
+		let span = Span::new(Pos::from_u32(0), Pos::from_u32(100));
+		let span = span.shift_by(20);
+		assert_eq!(span.low.as_u32(), 20);
+		assert_eq!(span.high.as_u32(), 120);
+	}
+
+	#[test]
+	fn shift_by_neg() {
+		let span = Span::new(Pos::from_u32(21), Pos::from_u32(100));
+		let span = span.shift_by(-20);
+		assert_eq!(span.low.as_u32(), 1);
+		assert_eq!(span.high.as_u32(), 80);
+	}
+
+	#[test]
+	fn shift_low_by_pos() {
+		let span = Span::new(Pos::from_u32(0), Pos::from_u32(100));
+		let span = span.shift_low_by(20);
+		assert_eq!(span.low.as_u32(), 20);
+		assert_eq!(span.high.as_u32(), 100);
+	}
+
+	#[test]
+	fn shift_low_by_neg() {
+		let span = Span::new(Pos::from_u32(21), Pos::from_u32(100));
+		let span = span.shift_low_by(-20);
+		assert_eq!(span.low.as_u32(), 1);
+		assert_eq!(span.high.as_u32(), 100);
+	}
+
+	#[test]
+	fn shift_high_by_pos() {
+		let span = Span::new(Pos::from_u32(0), Pos::from_u32(100));
+		let span = span.shift_high_by(20);
+		assert_eq!(span.low.as_u32(), 0);
+		assert_eq!(span.high.as_u32(), 120);
+	}
+
+	#[test]
+	fn shift_high_by_neg() {
+		let span = Span::new(Pos::from_u32(21), Pos::from_u32(100));
+		let span = span.shift_high_by(-20);
+		assert_eq!(span.low.as_u32(), 21);
+		assert_eq!(span.high.as_u32(), 80);
+	}
+
+	#[test]
+	fn union() {
+		let span_lhs = Span::new(Pos::from_u32(50), Pos::from_u32(80));
+		let span_rhs = Span::new(Pos::from_u32(10), Pos::from_u32(80));
+		let union = span_lhs.union(span_rhs);
+		assert_eq!(union.low.as_u32(), 10);
+		assert_eq!(union.high.as_u32(), 80);
+
+		let span_lhs = Span::new(Pos::from_u32(0), Pos::from_u32(80));
+		let span_rhs = Span::new(Pos::from_u32(10), Pos::from_u32(100));
+		let union = span_lhs.union(span_rhs);
+		assert_eq!(union.low.as_u32(), 0);
+		assert_eq!(union.high.as_u32(), 100);
+
+		let span_lhs = Span::new(Pos::from_u32(0), Pos::from_u32(100));
+		let span_rhs = Span::new(Pos::from_u32(10), Pos::from_u32(80));
+		let union = span_lhs.union(span_rhs);
+		assert_eq!(union.low.as_u32(), 0);
+		assert_eq!(union.high.as_u32(), 100);
+
+		let span_lhs = Span::new(Pos::from_u32(20), Pos::from_u32(100));
+		let span_rhs = Span::new(Pos::from_u32(10), Pos::from_u32(120));
+		let union = span_lhs.union(span_rhs);
+		assert_eq!(union.low.as_u32(), 10);
+		assert_eq!(union.high.as_u32(), 120);
+	}
+}
