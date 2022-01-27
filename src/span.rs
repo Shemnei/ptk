@@ -1,4 +1,6 @@
-use crate::pos::{IWidth, Pos};
+use std::ops::{Index, Range};
+
+use crate::pos::{IWidth, Pos, Width};
 
 /// Represents a span with an inclusive start ([`Span::low`]) and an exclusive
 /// end ([`Span::high`]).
@@ -159,5 +161,44 @@ impl Span {
 			if amount_is_neg { high - abs_amount } else { high - abs_amount };
 
 		Self::new(low, Pos::from_u32(high))
+	}
+
+	/// Combines two spans and creates a new span which encloses both.
+	pub fn union(self, other: Self) -> Self {
+		let low = std::cmp::min(self.low.as_u32(), other.low.as_u32());
+		let high = std::cmp::max(self.high.as_u32(), other.high.as_u32());
+
+		Self::new(Pos::from_u32(low), Pos::from_u32(high))
+	}
+
+	/// Converts this span to a range.
+	pub fn to_pos_range(self) -> Range<Pos> {
+		self.low..self.high
+	}
+
+	/// Converts this span to a range.
+	pub fn to_u32_range(self) -> Range<u32> {
+		self.low.as_u32()..self.high.as_u32()
+	}
+
+	/// Converts this span to a range.
+	pub fn to_usize_range(self) -> Range<usize> {
+		self.low.as_usize()..self.high.as_usize()
+	}
+}
+
+impl Index<Span> for str {
+	type Output = str;
+
+	fn index(&self, index: Span) -> &Self::Output {
+		&self[index.to_usize_range()]
+	}
+}
+
+impl Index<Span> for [u8] {
+	type Output = [u8];
+
+	fn index(&self, index: Span) -> &Self::Output {
+		&self[index.to_usize_range()]
 	}
 }
