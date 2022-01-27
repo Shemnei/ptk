@@ -197,6 +197,15 @@ impl Span {
 	}
 }
 
+impl<P> From<Range<P>> for Span
+where
+	P: Into<Pos>,
+{
+	fn from(value: Range<P>) -> Self {
+		Self::new(value.start.into(), value.end.into())
+	}
+}
+
 impl Index<Span> for str {
 	type Output = str;
 
