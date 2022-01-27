@@ -18,6 +18,7 @@ impl Span {
 	/// # Note
 	///
 	/// If `low` is greater than `high` the values will be switched.
+	#[must_use]
 	pub fn new(mut low: Pos, mut high: Pos) -> Self {
 		if low > high {
 			std::mem::swap(&mut low, &mut high);
@@ -27,12 +28,14 @@ impl Span {
 	}
 
 	/// Replaces [`Span::low`] with the given value.
+	#[must_use]
 	pub fn with_low(self, low: Pos) -> Self {
 		let Self { high, .. } = self;
 		Self::new(low, high)
 	}
 
 	/// Replaces [`Span::high`] with the given value.
+	#[must_use]
 	pub fn with_high(self, high: Pos) -> Self {
 		let Self { low, .. } = self;
 		Self::new(low, high)
@@ -44,6 +47,7 @@ impl Span {
 	///
 	/// This function will panic if an under or overflow occures during the
 	/// shifting.
+	#[must_use]
 	pub fn shift_by(self, amount: IWidth) -> Self {
 		let Self { low, high } = self;
 		let (low, high) = (low.as_u32(), high.as_u32());
@@ -71,7 +75,8 @@ impl Span {
 	}
 
 	/// Shifts both [`Span::low`] and [`Span::high`] by the given amount.
-	pub unsafe fn unchecked_shift_by(self, amount: IWidth) -> Self {
+	#[must_use]
+	pub fn unchecked_shift_by(self, amount: IWidth) -> Self {
 		let Self { low, high } = self;
 		let (low, high) = (low.as_u32(), high.as_u32());
 
@@ -93,6 +98,7 @@ impl Span {
 	///
 	/// This function will panic if an under or overflow occures during the
 	/// shifting.
+	#[must_use]
 	pub fn shift_low_by(self, amount: IWidth) -> Self {
 		let Self { low, high } = self;
 		let low = low.as_u32();
@@ -112,7 +118,8 @@ impl Span {
 	}
 
 	/// Shifts both [`Span::low`] by the given amount.
-	pub unsafe fn unchecked_shift_low_by(self, amount: IWidth) -> Self {
+	#[must_use]
+	pub fn unchecked_shift_low_by(self, amount: IWidth) -> Self {
 		let Self { low, high } = self;
 		let low = low.as_u32();
 
@@ -131,6 +138,7 @@ impl Span {
 	///
 	/// This function will panic if an under or overflow occures during the
 	/// shifting.
+	#[must_use]
 	pub fn shift_high_by(self, amount: IWidth) -> Self {
 		let Self { low, high } = self;
 		let high = high.as_u32();
@@ -150,7 +158,8 @@ impl Span {
 	}
 
 	/// Shifts both [`Span::high`] by the given amount.
-	pub unsafe fn unchecked_shift_high_by(self, amount: IWidth) -> Self {
+	#[must_use]
+	pub fn unchecked_shift_high_by(self, amount: IWidth) -> Self {
 		let Self { low, high } = self;
 		let high = high.as_u32();
 
@@ -164,6 +173,7 @@ impl Span {
 	}
 
 	/// Combines two spans and creates a new span which encloses both.
+	#[must_use]
 	pub fn union(self, other: Self) -> Self {
 		let low = std::cmp::min(self.low.as_u32(), other.low.as_u32());
 		let high = std::cmp::max(self.high.as_u32(), other.high.as_u32());
