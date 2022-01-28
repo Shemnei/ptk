@@ -21,17 +21,21 @@ pub enum Origin {
 /// E.g. `\t` is a single character but will/can be displayed as 4 spaces.
 ///
 /// They are recorded to correct any position when printing to the terminal.
-pub enum SpecialWidthChar {
-	Tab,
-	Other {
-		byte_len: usize,
-		char_len: usize,
-	},
-}
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum SpecialWidthChar {}
 
+/// A source for which to show/attach diagnostics.
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Source {
+	/// Origin of the source.
 	origin: Origin,
+
+	/// Acutual data the source contains.
 	data: String,
+
+	/// Indices for each line start.
 	line_indices: Vec<usize>,
+
+	/// List of special width characters.
 	swc: Vec<SpecialWidthChar>,
 }

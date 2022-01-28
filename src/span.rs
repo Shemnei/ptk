@@ -4,6 +4,7 @@ use crate::pos::{IWidth, Pos};
 
 /// Represents a span with an inclusive start ([`Span::low`]) and an exclusive
 /// end ([`Span::high`]).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Span {
 	/// Inclusive start of the span.
 	low: Pos,
@@ -182,17 +183,17 @@ impl Span {
 	}
 
 	/// Converts this span to a range.
-	pub fn to_pos_range(self) -> Range<Pos> {
+	pub const fn to_pos_range(self) -> Range<Pos> {
 		self.low..self.high
 	}
 
 	/// Converts this span to a range.
-	pub fn to_u32_range(self) -> Range<u32> {
+	pub const fn to_u32_range(self) -> Range<u32> {
 		self.low.as_u32()..self.high.as_u32()
 	}
 
 	/// Converts this span to a range.
-	pub fn to_usize_range(self) -> Range<usize> {
+	pub const fn to_usize_range(self) -> Range<usize> {
 		self.low.as_usize()..self.high.as_usize()
 	}
 }
@@ -207,7 +208,7 @@ where
 }
 
 impl Index<Span> for str {
-	type Output = str;
+	type Output = Self;
 
 	fn index(&self, index: Span) -> &Self::Output {
 		&self[index.to_usize_range()]
@@ -215,7 +216,7 @@ impl Index<Span> for str {
 }
 
 impl Index<Span> for [u8] {
-	type Output = [u8];
+	type Output = Self;
 
 	fn index(&self, index: Span) -> &Self::Output {
 		&self[index.to_usize_range()]

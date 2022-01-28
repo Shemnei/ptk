@@ -1,13 +1,14 @@
-#![allow(dead_code, rustdoc::private_intra_doc_links)]
+#![allow(dead_code)]
+//#![allow(rustdoc::private_intra_doc_links)]
 #![deny(
 	deprecated_in_future,
 	exported_private_dependencies,
 	future_incompatible,
 	missing_copy_implementations,
-	rustdoc::missing_crate_level_docs,
+	// TODO: rustdoc::missing_crate_level_docs,
 	rustdoc::broken_intra_doc_links,
-	missing_docs,
-	clippy::missing_docs_in_private_items,
+	// TODO: missing_docs,
+	// TODO: clippy::missing_docs_in_private_items,
 	missing_debug_implementations,
 	private_in_public,
 	rust_2021_compatibility,
@@ -29,7 +30,7 @@
 )]
 #![cfg_attr(docsrs, feature(doc_cfg), feature(doc_alias))]
 
+pub mod loc;
 pub mod pos;
 pub mod span;
-pub mod loc;
 pub mod src;
