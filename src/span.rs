@@ -7,10 +7,10 @@ use crate::pos::{IWidth, Pos};
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Span {
 	/// Inclusive start of the span.
-	low: Pos,
+	pub low: Pos,
 
 	/// Exclusive end of the span.
-	high: Pos,
+	pub high: Pos,
 }
 
 impl Span {
