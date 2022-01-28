@@ -1,5 +1,3 @@
-set dotenv-load := false
-
 _default:
 	@just --list
 
