@@ -15,15 +15,6 @@ pub enum Origin {
 	Unknown,
 }
 
-/// A special width character is any character which when printed is not
-/// displayed as as the same length.
-///
-/// E.g. `\t` is a single character but will/can be displayed as 4 spaces.
-///
-/// They are recorded to correct any position when printing to the terminal.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub enum SpecialWidthChar {}
-
 /// A source for which to show/attach diagnostics.
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Source {
@@ -35,7 +26,47 @@ pub struct Source {
 
 	/// Indices for each line start.
 	line_indices: Vec<usize>,
+	// TODO: special width chars to get correct index when printing
+}
 
-	/// List of special width characters.
-	swc: Vec<SpecialWidthChar>,
+impl Source {
+	pub fn new(origin: Origin, data: String) -> Self {
+		let line_indices = scan_lines(&data);
+
+		Self { origin, data, line_indices }
+	}
+
+	pub fn from_file(path: PathBuf) -> Result<Self, std::io::Error> {
+		let data = std::fs::read_to_string(&path)?;
+		Ok(Self::new(Origin::Path(path), data))
+	}
+}
+
+fn scan_lines(mut data: &str) -> Vec<usize> {
+	let mut line_indices = vec![0];
+	let mut offset = 0;
+
+	while let Some(index) = data.find('\n') {
+		let absolute_index = offset + index;
+
+		line_indices.push(absolute_index);
+
+		let skip_to_index = index + 1;
+		data = &data[skip_to_index..];
+		offset += skip_to_index;
+	}
+
+	line_indices
+}
+
+#[cfg(test)]
+mod tests {
+	#[test]
+	fn scan_lines() {
+		const DATA: &'static str = "Hello\nWorld\n";
+
+		assert_eq!(super::scan_lines(DATA), vec![0, 5, 11]);
+		assert_eq!(DATA.as_bytes()[5], b'\n');
+		assert_eq!(DATA.as_bytes()[11], b'\n');
+	}
 }
