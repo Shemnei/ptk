@@ -63,7 +63,7 @@ fn scan_lines(mut data: &str) -> Vec<usize> {
 mod tests {
 	#[test]
 	fn scan_lines() {
-		const DATA: &'static str = "Hello\nWorld\n";
+		const DATA: &str = "Hello\nWorld\n";
 
 		assert_eq!(super::scan_lines(DATA), vec![0, 5, 11]);
 		assert_eq!(DATA.as_bytes()[5], b'\n');
