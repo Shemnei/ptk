@@ -1,5 +1,8 @@
 use std::path::PathBuf;
 
+use crate::loc::Loc;
+use crate::pos::Pos;
+
 /// Determins the origin from which a [`Source`] came from.
 ///
 /// This is mainly used when printing to the terminal.
@@ -40,10 +43,27 @@ impl Source {
 		let data = std::fs::read_to_string(&path)?;
 		Ok(Self::new(Origin::Path(path), data))
 	}
+
+	pub fn pos_to_loc(&self, pos: Pos) -> Option<Loc> {
+		if pos.as_usize() >= self.data.len() {
+			return None;
+		}
+
+		let line_index = self
+			.line_indices
+			.binary_search(&pos.as_usize())
+			.map_or_else(|x| x, |x| x);
+
+		let line_pos = self.line_indices[line_index];
+
+		let column_index = pos.as_usize() - line_pos;
+
+		Some(Loc::new(line_index, column_index))
+	}
 }
 
 fn scan_lines(mut data: &str) -> Vec<usize> {
-	let mut line_indices = vec![0];
+	let mut line_indices = Vec::new();
 	let mut offset = 0;
 
 	while let Some(index) = data.find('\n') {
